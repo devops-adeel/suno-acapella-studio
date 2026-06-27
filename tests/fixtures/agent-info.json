@@ -1,0 +1,6 @@
+{
+  "tool": "suno",
+  "version": "dryrun",
+  "commands": ["generate", "describe", "lyrics", "extend", "concat", "cover", "remaster", "stems", "timed-lyrics", "info", "list", "credits", "persona", "models", "download", "set", "publish", "auth", "config", "agent-info", "install-skill", "update"],
+  "exit_codes": {"0": "success", "1": "runtime/network (retry)", "2": "config", "3": "auth", "4": "rate-limit"}
+}
