@@ -21,6 +21,12 @@ FAIL if ANY of these is true:
 - Missing an explicit vocal gender tag.
 - The plan uses `--instrumental` (forbidden).
 
+FAIL also if:
+- Generate command in `prompt-package.md` uses wrong CLI flag names: `--style` (must be
+  `--tags`), `--vocal-gender` (must be `--vocal`), `--model chirp-fenix` (must be
+  `--model v5.5`). If the authoritative generate command section is absent entirely, FAIL
+  with instruction to add it.
+
 PASS → write `songs/<slug>/generations/<n>/gate1.json`:
 ```json
 { "gate": 1, "result": "PASS", "checked_at": "[ISO8601]",
@@ -30,6 +36,9 @@ FAIL → write the same file with `"result":"FAIL"`, a `failures` array, and exa
 for the Prompt Architect. Return to the Producer. Generation stays hook-blocked until PASS.
 
 ## Gate 2 — instrumental leakage (automated)
+Read `.claude/skills/ffmpeg/SKILL.md` before interpreting any Gate 2 result — it documents
+what mean_volume dBFS means, the calibration decision tree, and the MANUAL fallback procedure.
+
 After a clip is generated, run:
 ```bash
 bash scripts/gate2.sh <clip_id> songs/<slug>/generations/<n>

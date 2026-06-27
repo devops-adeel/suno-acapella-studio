@@ -13,22 +13,25 @@ gate is not PASS; stop and report to the Producer. Never fabricate a clip id.
 
 ## Pre-flight
 ```bash
-suno credits                          # need a sane balance before starting
+suno credits   # record the balance before starting — you will report it on any failure
 cat songs/<slug>/generations/<n>/gate1.json   # confirm "result":"PASS"
 ```
 
+Then read `songs/<slug>/prompt-package.md`. The authoritative generate command is at the
+bottom of that file. **Run it verbatim** — do not reconstruct flags from scratch.
+
 ## Generate chorus (best-of-2)
+Run the authoritative command from `prompt-package.md` twice, adding `--json` and redirecting
+output for each variation:
+
 ```bash
-suno generate \
-  --title "[from prompt-package.md]" \
-  --tags "[style field]" \
-  --exclude "[exclusions field]" \
-  --lyrics-file songs/<slug>/sections/chorus.md \
-  --model v5.5 --vocal female --weirdness 30 --style-influence 70 \
-  --wait --download songs/<slug>/generations/<n>/audio/ \
-  --json > songs/<slug>/generations/<n>/chorus-a.json
+# Variation A
+<command from prompt-package.md> --json > songs/<slug>/generations/<n>/chorus-a.json
+# Variation B  
+<command from prompt-package.md> --json > songs/<slug>/generations/<n>/chorus-b.json
 ```
-Run again → `chorus-b.json`. Surface both; record the approved choice in `status.md`.
+
+Surface both; record the approved choice in `status.md`.
 NEVER pass `--instrumental` (the hook will block it).
 
 ## Extend from the approved chorus, then concat
@@ -44,13 +47,21 @@ suno concat [VERSE1_ID] [CHORUS_ID] [VERSE2_ID] [CHORUS_ID] [BRIDGE_ID] [OUTRO_I
 Report to the Adversarial Critic for Gate 2 + Gate 3. Do NOT surface audio to the user until
 `gate2.json` and `gate3.json` exist.
 
-## Error handling — honor suno's semantic exit codes
-| Exit | Meaning | Action |
-|---|---|---|
-| 0 | success | continue |
-| 1 | runtime/network | retry once with backoff |
-| 2 | config error | stop, report — do NOT retry |
-| 3 | auth error | `suno auth --refresh` (then `--login`), retry once |
-| 4 | rate-limit | wait, then retry |
-| `schema_drift` in output | API drift | `suno update`, retry |
-Persistent (2+ attempts): stop and report the actual error to the Producer.
+## Error handling — confirm before every retry
+
+On ANY failure (non-zero exit code or error in JSON output):
+1. Record: exit code, full error output, credit balance *before* the attempt, credit balance *now*, attempt number.
+2. **Stop. Surface all of the above to the Producer. Do not retry.**
+3. Wait for explicit instruction before attempting again.
+
+Exit code reference (for your report — not for autonomous action):
+| Exit | Meaning |
+|---|---|
+| 0 | success |
+| 1 | runtime/network — may be transient |
+| 2 | config error — do NOT suggest retry |
+| 3 | auth — suggest `suno auth --refresh` |
+| 4 | rate-limit — suggest waiting before retry |
+| `schema_drift` | API drift — suggest `suno update` |
+
+Never retry autonomously. Never loop unattended. Every attempt costs credits.

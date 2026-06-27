@@ -1,0 +1,39 @@
+{
+  "version": "1",
+  "status": "success",
+  "data": {
+    "clip_id": "1be5fd03",
+    "title": "Gate 2 Calibration — Open Morning",
+    "image_url": null,
+    "lyric": "I wake to golden light\nstreaming through my window\nmy voice is whole and clear\na simple morning song\n\nI wake to golden light\nstreaming through my window\nmy voice is whole and clear\na simple morning song",
+    "music_url": "songs/gate2-calibration/generations/001/audio/gate-2-calibration--open-morning-1be5fd03.mp3",
+    "duration": 60,
+    "status": "complete",
+    "model_name": "v5.5",
+    "generation_method": "generate",
+    "prompt_id": null,
+    "type": "gen",
+    "seed": 1719508738,
+    "gpt_description_prompt": null,
+    "tags": "a cappella, unaccompanied vocals, solo voice, female vocals, clear, warm, intimate, single voice, no harmony, no backing vocals, dry vocal, close-mic, no reverb, no room sound, no instruments, no accompaniment",
+    "negative_tags": "guitar, piano, drums, bass, synthesizer, strings, brass, woodwinds, keyboard, organ, violin, cello, viola, trumpet, trombone, saxophone, flute, clarinet, oboe, harp, banjo, mandolin, ukulele, electric guitar, acoustic guitar, bass guitar, rhythm guitar, 808, hi-hat, snare, kick, cymbal, percussion, melody, chord progression, backing track, accompaniment, instruments, music, harmonica, accordion, orchestral, band, live band, no chord structure, no musical arrangement, no audio bed, no pads, no ambient music, no underscore, no musical backdrop, ooh vocals, ahh vocals, la la vocals, ambient intro, cinematic intro, wordless intro, humming, vocalise, beatbox, mouth percussion, vocal percussion, harmony, backing vocals",
+    "is_public": false
+  },
+  "notes": {
+    "gate_1_pass": true,
+    "variations_generated": 8,
+    "primary_clip_id": "1be5fd03",
+    "all_clip_ids": [
+      "1be5fd03",
+      "242227c0",
+      "40c54f63",
+      "784018bd",
+      "7feb8bba",
+      "b8759abd",
+      "ecdb89f2",
+      "f5b1c8f8"
+    ],
+    "retry_reason": "Initial generation timed out and hit rate-limit; retried successfully via until-loop",
+    "files_downloaded": true
+  }
+}

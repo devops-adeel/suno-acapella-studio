@@ -9,11 +9,15 @@ studio_repo_dir() {
   echo "$d"
 }
 
-# Extract `songs/<slug>/generations/<n>` from a shell command string.
-# Works whether the path came from --download, --lyrics-file, or an output redirect.
+# Extract `songs/<slug>/generations/<n>` from the --download flag of a shell command.
+# Only looks at the --download argument — avoids false positives when generation paths
+# appear in quoted text (e.g. gh issue create --body "...songs/.../generations/...").
 studio_gen_dir_from_cmd() {
   local cmd="$1"
-  printf '%s' "$cmd" | grep -oE 'songs/[^/ "'"'"']+/generations/[0-9]+' | head -1
+  printf '%s' "$cmd" \
+    | grep -oE -- '--download[[:space:]]+[^[:space:]]+' \
+    | grep -oE 'songs/[^/"'"'"' ]+/generations/[0-9]+' \
+    | head -1
 }
 
 # Read the "result" field from a gate JSON file. Echoes PASS|FAIL|MISSING.

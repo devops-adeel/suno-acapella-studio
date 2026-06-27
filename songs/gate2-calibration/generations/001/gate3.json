@@ -1,0 +1,12 @@
+{
+  "gate": 3,
+  "result": "PASS",
+  "method": "alignment-coverage",
+  "checked_at": "2026-06-27T18:05:26Z",
+  "clip_id": "b8759abd-6a12-4538-8c45-d0dc78f26753",
+  "aligned_words": 46,
+  "total_words": 46,
+  "coverage": 1.000,
+  "pass_threshold": 0.85,
+  "flag_threshold": 0.60
+}
