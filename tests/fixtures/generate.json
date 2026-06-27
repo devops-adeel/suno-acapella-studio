@@ -1,0 +1,18 @@
+{
+  "data": [
+    {
+      "id": "clip_dryrun_a",
+      "status": "complete",
+      "title": "Dry Run Chorus A",
+      "model": "v5.5",
+      "audio_url": "https://example.invalid/clip_dryrun_a.mp3"
+    },
+    {
+      "id": "clip_dryrun_b",
+      "status": "complete",
+      "title": "Dry Run Chorus B",
+      "model": "v5.5",
+      "audio_url": "https://example.invalid/clip_dryrun_b.mp3"
+    }
+  ]
+}

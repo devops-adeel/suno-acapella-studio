@@ -1,0 +1,122 @@
+#!/usr/bin/env bash
+# suno — dry-run wrapper shim for Suno Acapella Studio.
+#
+# When SUNO_DRYRUN=1, this shim answers from tests/fixtures/ and spends 0 credits,
+# so every hook / gate / agent path is testable offline. When SUNO_DRYRUN is unset
+# (or 0), it execs the REAL `suno` binary.
+#
+# Finding the real binary (live mode):
+#   1. $SUNO_REAL_BIN if set
+#   2. first `suno` on PATH that is NOT this shim
+#
+# Dry-run stem selection (for testing gate2 PASS vs FAIL):
+#   SUNO_DRYRUN_STEM=silent  -> instrumental stem ~silence  -> gate2 PASS  (default)
+#   SUNO_DRYRUN_STEM=noisy   -> instrumental stem loud      -> gate2 FAIL
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+FIXTURES="$REPO_DIR/tests/fixtures"
+
+is_dryrun() { [ "${SUNO_DRYRUN:-0}" = "1" ] || [ "${SUNO_DRYRUN:-}" = "true" ]; }
+
+run_real() {
+  local real="${SUNO_REAL_BIN:-}"
+  if [ -z "$real" ]; then
+    # Find the first `suno` on PATH that is not this shim.
+    local self; self="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
+    local IFS=:
+    for d in $PATH; do
+      local cand="$d/suno"
+      if [ -x "$cand" ] && [ "$(cd "$(dirname "$cand")" && pwd)/$(basename "$cand")" != "$self" ]; then
+        real="$cand"; break
+      fi
+    done
+  fi
+  if [ -z "$real" ] || [ ! -x "$real" ]; then
+    echo "suno (shim): real suno binary not found. Install it (brew tap paperfoot/tap; brew install suno) or set SUNO_REAL_BIN." >&2
+    exit 2
+  fi
+  exec "$real" "$@"
+}
+
+# --- dry-run helpers -------------------------------------------------------
+
+# First non-flag token is the subcommand.
+SUBCMD=""
+for a in "$@"; do
+  case "$a" in
+    -*) ;;            # skip flags
+    *) SUBCMD="$a"; break ;;
+  esac
+done
+
+# Pull the value following a given flag from the arg list (e.g. --download <dir>).
+flag_val() {
+  local want="$1"; shift
+  local prev=""
+  for a in "$@"; do
+    if [ "$prev" = "$want" ]; then echo "$a"; return 0; fi
+    prev="$a"
+  done
+  return 1
+}
+
+emit_fixture() { # emit_fixture <name>
+  local f="$FIXTURES/$1"
+  if [ -f "$f" ]; then cat "$f"; else echo "{\"error\":\"missing fixture: $1\"}"; fi
+}
+
+if ! is_dryrun; then
+  run_real "$@"
+fi
+
+# ---------------- DRY RUN ----------------
+case "$SUBCMD" in
+  credits)
+    emit_fixture credits.json
+    ;;
+  agent-info)
+    emit_fixture agent-info.json
+    ;;
+  generate|describe|cover|remaster)
+    # Fake-produce a downloaded audio file if --download <dir> was supplied.
+    if dl="$(flag_val --download "$@")"; then
+      mkdir -p "$dl"
+      : > "$dl/dryrun-clip.mp3"
+    fi
+    emit_fixture generate.json
+    ;;
+  extend|concat)
+    emit_fixture generate.json
+    ;;
+  stems)
+    # Produce a local instrumental stem so gate2's ffmpeg path is exercised offline.
+    local_stem_dir="${SUNO_DRYRUN_STEMDIR:-$REPO_DIR/tests/tmp/stems}"
+    mkdir -p "$local_stem_dir"
+    case "${SUNO_DRYRUN_STEM:-silent}" in
+      noisy) src="$FIXTURES/instrumental-stem-noisy.wav" ;;
+      *)     src="$FIXTURES/instrumental-stem-silent.wav" ;;
+    esac
+    inst="$local_stem_dir/instrumental.wav"
+    voc="$local_stem_dir/vocals.wav"
+    [ -f "$src" ] && cp -f "$src" "$inst" || : > "$inst"
+    [ -f "$FIXTURES/instrumental-stem-silent.wav" ] && cp -f "$FIXTURES/instrumental-stem-silent.wav" "$voc" || : > "$voc"
+    # Echo stems JSON with local paths injected so the gate can find the file offline.
+    if command -v jq >/dev/null 2>&1 && [ -f "$FIXTURES/stems.json" ]; then
+      jq --arg inst "$inst" --arg voc "$voc" \
+        '.data.instrumental_path=$inst | .data.vocals_path=$voc' "$FIXTURES/stems.json"
+    else
+      printf '{"data":{"instrumental_path":"%s","vocals_path":"%s"}}\n' "$inst" "$voc"
+    fi
+    ;;
+  timed-lyrics)
+    emit_fixture timed-lyrics.json
+    ;;
+  info|list|status|persona|models)
+    emit_fixture generate.json
+    ;;
+  *)
+    echo "{\"ok\":true,\"dryrun\":true,\"subcommand\":\"${SUBCMD:-unknown}\"}"
+    ;;
+esac

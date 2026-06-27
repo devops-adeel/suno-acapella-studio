@@ -1,0 +1,24 @@
+{
+  "data": [
+    {"word": "I",        "start_s": 0.50, "end_s": 0.70, "success": true},
+    {"word": "remember",  "start_s": 0.70, "end_s": 1.20, "success": true},
+    {"word": "the",       "start_s": 1.20, "end_s": 1.35, "success": true},
+    {"word": "morning",   "start_s": 1.35, "end_s": 1.90, "success": true},
+    {"word": "light",     "start_s": 1.90, "end_s": 2.40, "success": true},
+    {"word": "falling",   "start_s": 2.40, "end_s": 2.95, "success": true},
+    {"word": "soft",      "start_s": 2.95, "end_s": 3.30, "success": true},
+    {"word": "across",    "start_s": 3.30, "end_s": 3.80, "success": true},
+    {"word": "your",      "start_s": 3.80, "end_s": 4.00, "success": true},
+    {"word": "face",      "start_s": 4.00, "end_s": 4.55, "success": true},
+    {"word": "and",       "start_s": 4.55, "end_s": 4.70, "success": true},
+    {"word": "I",         "start_s": 4.70, "end_s": 4.85, "success": true},
+    {"word": "forgave",   "start_s": 4.85, "end_s": 5.50, "success": true},
+    {"word": "you",       "start_s": 5.50, "end_s": 5.80, "success": true},
+    {"word": "quietly",   "start_s": 5.80, "end_s": 6.40, "success": true},
+    {"word": "before",    "start_s": 6.40, "end_s": 6.90, "success": true},
+    {"word": "the",       "start_s": 6.90, "end_s": 7.05, "success": true},
+    {"word": "grief",     "start_s": 7.05, "end_s": 7.60, "success": true},
+    {"word": "left",      "start_s": 0.00, "end_s": 0.00, "success": false},
+    {"word": "me",        "start_s": 0.00, "end_s": 0.00, "success": false}
+  ]
+}

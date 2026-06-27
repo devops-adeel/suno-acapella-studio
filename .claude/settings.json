@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(suno *)",
+      "Bash(bash scripts/*)",
+      "Bash(./scripts/*)",
+      "Bash(cat songs/**)",
+      "Bash(ls songs/**)",
+      "Bash(ls -la songs/**)",
+      "Bash(stat *)",
+      "Bash(ffmpeg *)",
+      "Bash(jq *)",
+      "Write(songs/**)",
+      "Write(personas/**)",
+      "Write(.studio/**)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/gate-check.sh\""
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/inject-brief.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

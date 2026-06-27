@@ -1,0 +1,6 @@
+{
+  "gate": 1,
+  "result": "FAIL",
+  "failures": ["Style field leads with 'emotional pop ballad' — implies piano and strings"],
+  "fix_instructions": "Remove 'pop ballad'. Open positions 1-3 with acapella tags; put 'intimate vocal' at position 3."
+}

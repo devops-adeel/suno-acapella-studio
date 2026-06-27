@@ -1,0 +1,27 @@
+# Audio — large binaries
+songs/**/audio/
+songs/**/approved/*.wav
+songs/**/approved/*.mp3
+songs/**/approved/*.flac
+
+# Auth
+.env
+*.env.local
+.suno-auth
+
+# Studio runtime state (machine-local pointer)
+.studio/active-song
+
+# Python / Node
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local hook/test logs
+.studio/gate-check.log
+tests/tmp/
