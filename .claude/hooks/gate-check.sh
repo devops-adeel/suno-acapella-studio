@@ -27,9 +27,13 @@ if command -v jq >/dev/null 2>&1; then
 fi
 [ -z "$cmd" ] && cmd="$payload"   # fallback: treat raw stdin as the command (test mode)
 
-# Only concern ourselves with suno generation commands.
+# Only intercept actual suno CLI invocations — not commands that merely mention
+# "suno generate" in text (e.g. gh pr create --body "...", git commit -m "...").
+studio_is_suno_cmd "$cmd" || allow
+
+# Within a suno invocation, only gate on generate/describe subcommands.
 case "$cmd" in
-  *suno*generate*|*suno*describe*) : ;;
+  *generate*|*describe*) : ;;
   *) allow ;;
 esac
 
