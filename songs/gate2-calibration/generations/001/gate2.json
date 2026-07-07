@@ -1,0 +1,8 @@
+{
+  "gate": 2,
+  "result": "MANUAL",
+  "method": "fallback-manual",
+  "checked_at": "2026-06-27T17:53:49Z",
+  "clip_id": "2d848894-5329-4856-9f62-61b8ad28efda",
+  "note": "Could not obtain an instrumental stem from 'suno stems'. Fall back: run Split from Mix on suno.com, save the instrumental to songs/gate2-calibration/generations/001/audio/stems/instrumental.wav, then re-run gate2.sh."
+}

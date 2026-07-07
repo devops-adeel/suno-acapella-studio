@@ -64,7 +64,10 @@ Update `songs/<slug>/brief.md` status. For sessions past ~60 turns, run `/compac
 or start fresh and reload from the brief (drift mitigation).
 
 ## Honest caveats
-- Gate 2 dB thresholds and Gate 3 coverage thresholds are starting points; calibrate them on one real
-  generation before trusting them (see the plan / README).
+- **Gate 2 thresholds** are uncalibrated defaults (PASS_DB=-50, FLAG_DB=-30). Calibration is
+  blocked by suno-cli v0.5.7 `suno stems` bug (issue: paperfoot/suno-cli#5). When fixed, run
+  `/calibrate-gate2` — throwaway clips are saved, no credits needed. See `.claude/skills/ffmpeg/SKILL.md`.
+- **Gate 3 threshold** (0.85 coverage) calibrated 2026-06-27: 100% coverage on both throwaway
+  calibration clips; threshold confirmed appropriate. No adjustment needed.
 - `suno-cli` is unofficial and can break when Suno changes their API — `suno update`, then
   `suno auth --refresh`.

@@ -1,0 +1,20 @@
+{
+  "gate": 1,
+  "result": "PASS",
+  "checked_at": "2026-06-27T00:00:00Z",
+  "style_chars": 209,
+  "exclude_items": 64,
+  "lyrics_chars": 334,
+  "arc_match": true,
+  "checks": {
+    "acapella_positions_1_3": "PASS — 'a cappella, unaccompanied vocals, solo voice'",
+    "style_under_1000_chars": "PASS — 209 chars",
+    "exclusions_complete": "PASS — all 59 bank items present; 5 additional items included",
+    "lyrics_under_5000_chars": "PASS — 334 chars",
+    "max_section_lines": "PASS — longest section is 4 lines (limit 8)",
+    "arc_vs_brief": "PASS — metatags consistent with brief; Pre-Chorus intentionally collapsed per brief's 'keep short' directive",
+    "no_instrument_genre_tags": "PASS — no genre names that imply instruments in style field",
+    "vocal_gender_tag": "PASS — 'female vocals' in style; '--vocal-gender female' in command",
+    "no_instrumental_flag": "PASS — flag absent; prompt-package.md explicitly notes it is hook-blocked"
+  }
+}

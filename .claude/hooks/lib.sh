@@ -2,6 +2,22 @@
 # lib.sh — shared helpers for Suno Acapella Studio hooks & gate scripts.
 # Source this; do not execute. All functions avoid `set -e` surprises in callers.
 
+# Return 0 (true) if cmd is an actual suno CLI invocation, not a text mention of suno.
+# Strips leading env var assignments (KEY=VAL), then checks the first token.
+studio_is_suno_cmd() {
+  local cmd="$1"
+  local first
+  first="$(printf '%s' "$cmd" \
+    | sed 's/^[[:space:]]*//' \
+    | sed 's/^[A-Z_][A-Z_0-9]*=[^[:space:]]* //g' \
+    | awk '{print $1}' \
+    | tr -d "\"'")"
+  case "$first" in
+    suno|./suno|scripts/suno) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 # Resolve the repo root regardless of where we're sourced from.
 studio_repo_dir() {
   if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then echo "$CLAUDE_PROJECT_DIR"; return; fi
@@ -9,11 +25,15 @@ studio_repo_dir() {
   echo "$d"
 }
 
-# Extract `songs/<slug>/generations/<n>` from a shell command string.
-# Works whether the path came from --download, --lyrics-file, or an output redirect.
+# Extract `songs/<slug>/generations/<n>` from the --download flag of a shell command.
+# Only looks at the --download argument — avoids false positives when generation paths
+# appear in quoted text (e.g. gh issue create --body "...songs/.../generations/...").
 studio_gen_dir_from_cmd() {
   local cmd="$1"
-  printf '%s' "$cmd" | grep -oE 'songs/[^/ "'"'"']+/generations/[0-9]+' | head -1
+  printf '%s' "$cmd" \
+    | grep -oE -- '--download[[:space:]]+[^[:space:]]+' \
+    | grep -oE 'songs/[^/"'"'"' ]+/generations/[0-9]+' \
+    | head -1
 }
 
 # Read the "result" field from a gate JSON file. Echoes PASS|FAIL|MISSING.

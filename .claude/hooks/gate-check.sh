@@ -27,9 +27,13 @@ if command -v jq >/dev/null 2>&1; then
 fi
 [ -z "$cmd" ] && cmd="$payload"   # fallback: treat raw stdin as the command (test mode)
 
-# Only concern ourselves with suno generation commands.
+# Only intercept actual suno CLI invocations — not commands that merely mention
+# "suno generate" in text (e.g. gh pr create --body "...", git commit -m "...").
+studio_is_suno_cmd "$cmd" || allow
+
+# Within a suno invocation, only gate on generate/describe subcommands.
 case "$cmd" in
-  *suno*generate*|*suno*describe*) : ;;
+  *generate*|*describe*) : ;;
   *) allow ;;
 esac
 
@@ -51,7 +55,15 @@ fi
 
 gen_dir="$(studio_gen_dir_from_cmd "$cmd")"
 if [ -z "$gen_dir" ]; then
-  deny "Blocked: could not locate a songs/<slug>/generations/<n> path in the generate command, so gate1 PASS cannot be verified. Add --download songs/<slug>/generations/<n>/audio/ (and write the section JSON there)."
+  # No gen_dir found in the --download flag.
+  # Only deny if --download is followed by a songs/ path (a real but malformed generation).
+  # This prevents false positives when "suno generate" and "--download" both appear in
+  # quoted text (e.g. git commit -m "...suno generate...--download only...").
+  if printf '%s' "$cmd" | grep -qE -- '--download[[:space:]]+songs/'; then
+    deny "Blocked: --download flag present but no songs/<slug>/generations/<n> path found in its value. Fix the download path to songs/<slug>/generations/<n>/audio/."
+  else
+    allow
+  fi
 fi
 
 gate1="$repo/$gen_dir/gate1.json"
